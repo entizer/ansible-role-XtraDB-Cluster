@@ -16,7 +16,7 @@ xtradb_secured: "{{ xtradb_confdir }}/_secured"
 # password changed cookie
 xtradb_password_changed: "{{ xtradb_confdir }}/_password_changed"
 
-#ansible_host Defnes the root user
+# Defines the root user
 xtradb_root_user: root
 
 # Defines the root password
@@ -25,49 +25,50 @@ xtradb_root_password: root
 # Define Ansible group in which the nodes exist to be part of the cluster
 xtradb_nodes_group: xtradb-cluster-nodes
 
-# Define the node pool 
-#xtradb_wsrep_cluster_address: "gcomm://{{ groups[xtradb_nodes_group] | map('extract', hostvars, ['ansible_' ~ xtradb_bind_interface, 'ipv4', 'address']) | join(',') }}"
+# Define the node pool
 xtradb_wsrep_cluster_address: "gcomm://{{ groups['db'] | map('extract', hostvars, ['ansible_default_ipv4', 'address']) | join(',') }}"
 
 # Defines the which node should be considered the master in the cluster
 # Used to bootstrap cluster
-xtradb_master_node: "{{ hostvars[ groups[xtradb_nodes_group][0] ].ansible_default_ipv4.address }}"
+xtradb_master_node: "{{ hostvars[groups[xtradb_nodes_group][0]].ansible_default_ipv4.address }}"
+
+# Percona xtradb release package
+xtradb_release_package: ""
 
 # Defines the version
-xtradb_version: "57"
+xtradb_version: "80"
 
 # Defines the service systemd
 xtradb_service: mysql
 
 # Defines the network interfaces used
-#xtradb_bind_interface: eth0
+# xtradb_bind_interface: eth0
 
 # Defines the network address used
-#xtradb_bind_address: "{{ hostvars[inventory_hostname]['ansible_' + xtradb_bind_interface]['ipv4']['address'] }}"
 xtradb_bind_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
 
-# Defines the sst user
-xtradb_sst_user: sstuser
+# # Defines the sst user
+# xtradb_sst_user: sstuser
 
-# Defines the sst password
-xtradb_sst_password: sstpassword
+# # Defines the sst password
+# xtradb_sst_password: sstpassword
 
 # Defines the cluster name
 xtradb_cluster_name: foo
 
-# Boolean for cluster TLS mode
-xtradb_tls_enabled: false
+# # Boolean for cluster TLS mode
+# xtradb_tls_enabled: false
 
-# Boolean for self-signed certificates
-xtradb_tls_self_signed: false
+# # Boolean for self-signed certificates
+# xtradb_tls_self_signed: false
 
-# Boolean for custom certificates
-xtradb_tls_custom_cert: false
+# # Boolean for custom certificates
+# xtradb_tls_custom_cert: false
 
-# Defines filenames for certificate files
-xtradb_tls_ca_filename: ""
-xtradb_tls_cert_filename: ""
-xtradb_tls_key_filename: ""
+# # Defines filenames for certificate files
+# xtradb_tls_ca_filename: ""
+# xtradb_tls_cert_filename: ""
+# xtradb_tls_key_filename: ""
 
 # Disallow non-SSL clients
 xtradb_ssl_client_only: false
@@ -86,9 +87,9 @@ xtradb_configure_firewalld: false
 
 xtradb_wsrep_sync_wait: 2
 xtradb_binlog_format: "ROW"
-xtradb_character_set_server: "utf8"
-xtradb_collation_server: "utf8_general_ci"
-xtradb_default_character_set: "utf8"
+xtradb_character_set_server: "utf8mb4"
+xtradb_collation_server: "utf8mb4_general_ci"
+xtradb_default_character_set: "utf8mb4"
 xtradb_default_time_zone: "+00:00"
 xtradb_default_storage_engine: "InnoDB"
 xtradb_innodb_autoinc_lock_mode: 2

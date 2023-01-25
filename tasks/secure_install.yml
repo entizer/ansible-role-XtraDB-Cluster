@@ -1,31 +1,42 @@
 ---
-- name: Get temporary root password
-  shell: grep 'temporary password' /var/log/mysqld.log | awk '{print $NF}' | tail -n 1
-  register: "_xtradb_root_temp_password"
+- name: EL specific mysql initial password collection and config
   when:
-    - not _xtradb_password_changed.stat.exists
+    - (ansible_os_family == "RedHat")
+  block:
+    - name: EL8 | Get temporary root password
+      ansible.builtin.shell: grep 'temporary password' /var/log/mysqld.log | awk '{print $NF}' | tail -n 1
+      register: "_xtradb_root_temp_password"
+      when:
+        - not _xtradb_password_changed.stat.exists
 
-- name: Percona | Change Percona Root Pass
-  shell: "echo \"ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ xtradb_root_password }}'; FLUSH PRIVILEGES;\" | mysql -u root --password='{{ _xtradb_root_temp_password.stdout }}' --connect-expired-password"
+    - name: Percona | Change Percona Root Pass
+      ansible.builtin.shell: "echo \"ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ xtradb_root_password }}'; FLUSH PRIVILEGES;\" | mysql -u root --password='{{ _xtradb_root_temp_password.stdout }}' --connect-expired-password"
+      when:
+        - not _xtradb_password_changed.stat.exists
 
-- name: Marking as password is changed
-  file:
-    path: "{{ xtradb_password_changed }}"
-    state: "touch"
-    owner: root
-    group: root
-    mode: '0400'
+    - name: Marking as password is changed
+      ansible.builtin.file:
+        path: "{{ xtradb_password_changed }}"
+        state: "touch"
+        owner: root
+        group: root
+        mode: '0400'
+
+    - name: Include replication config file
+      ansible.builtin.lineinfile:
+        path: "/etc/my.cnf"
+        line: "!include /etc/mysql/wsrep.cnf"
 
 - name: Delete anonymous connections
-  mysql_user:
+  community.mysql.mysql_user:
     login_user: "{{ xtradb_root_user }}"
     login_password: "{{ xtradb_root_password }}"
     name: ""
-    host_all: yes
+    host_all: true
     state: absent
 
 - name: "Secure the MySQL root user for localhost"
-  mysql_user:
+  community.mysql.mysql_user:
     login_user: "{{ xtradb_root_user }}"
     login_password: "{{ xtradb_root_password }}"
     password: "{{ xtradb_root_password }}"
@@ -38,7 +49,7 @@
     - "{{ ansible_default_ipv4.address }}"
 
 - name: Remove the MySQL test database
-  mysql_db:
+  community.mysql.mysql_db:
     db: test
     login_user: "{{ xtradb_root_user }}"
     login_password: "{{ xtradb_root_password }}"
@@ -46,7 +57,7 @@
     state: absent
 
 - name: Marking as secured
-  file:
+  ansible.builtin.file:
     path: "{{ xtradb_secured }}"
     state: "touch"
     owner: root

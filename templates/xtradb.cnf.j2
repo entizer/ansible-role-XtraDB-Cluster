@@ -106,12 +106,6 @@ wsrep_cluster_address={{ xtradb_wsrep_cluster_address }}
 # Sync Wait
 {% if xtradb_wsrep_sync_wait %}wsrep_sync_wait={{ xtradb_wsrep_sync_wait }}{% endif %}
 
-# SST method
-wsrep_sst_method=xtrabackup-v2
-
-# Authentication for SST method
-wsrep_sst_auth='{{ xtradb_sst_user }}:{{ xtradb_sst_password }}'
-
 # Fixes for out of order queries for key contraints
 wsrep_provider_options="cert.optimistic_pa=NO"
 wsrep_certification_rules='OPTIMIZED'
@@ -119,5 +113,3 @@ wsrep_certification_rules='OPTIMIZED'
 {% if xtradb_pxc_strict_mode %}# pxc_strict_mode allowed values: DISABLED,PERMISSIVE,ENFORCING,MASTER
 # Set ENFORCING to block the use of experimental and unsupported features in Percona XtraDB Cluster
 pxc_strict_mode={{ xtradb_pxc_strict_mode }}{% endif %}
-
-{% if xtradb_tls_enabled %}pxc_encrypt_cluster_traffic=ON{% endif %}
