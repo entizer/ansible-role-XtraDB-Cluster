@@ -1,14 +1,12 @@
 # Ansible role `ansible-role-XtraDB-Cluster`
 
-An Ansible role for setup a percon XtraDB Cluster. Specifically, the responsibilities of this role are to:
-
-- install packages
-- secure connections
-- bootstrap the cluster
+This is a purpose built role to install a standard baseline multi-node Percona XtraDB MySQL 8 Cluster for use with Morpheus.
+It is not intended to be a cluster for general use, although there is nothing particularly special about it.
+TLS is enabled by default as it is the new default in Percona.
 
 ## Requirements
 
-No specific requirements
+3 nodes minimum and incremented in odd numbers: 5, 7, 9, etc.
 
 ## Role Variables
 
@@ -19,14 +17,7 @@ These are the minimum variables needed to create a cluster with a user and datab
 | Variable  |
 | :--- |
 | xtradb_cluster_name |
-| xtradb_sst_user |
-| xtradb_sst_password |
-| xtradb_root_password |
 | xtradb_nodes_group |
-| xtradb_bind_interface |
-| xtradb_bind_address |
-| xtradb_wsrep_cluster_address |
-| xtradb_master_node |
 | xtradb_databases |
 | xtradb_users |
 
@@ -46,19 +37,12 @@ These are the minimum variables needed to create a cluster with a user and datab
 | `xtradb_root_user` | `root` | The root user |
 | `xtradb_secured` | `xtradb_datadir`/secured |A cookie for idempotency |
 | `xtradb_service` | `mysql` | Linux service name  |
-| `xtradb_sst_password` | `sstpassword` | Password for the `xtradb_sst_user` |
-| `xtradb_sst_user` | `sstuser` | User used to the state snapshot transfer  |
 | `xtradb_swappiness` | `0` | "Swappiness" value. System default is 60. A value of 0 means that swapping out processes is avoided.  |
 | `xtradb_databases`     | []          | List of names of the databases to be added                                                                  |
 | `xtradb_users`         | []          | List of dicts specifying the users to be added. See below for details.                                      |
-| `xtradb_version` | `57` | Package version of XtraDB |
+| `xtradb_version` | `80` | Package version of XtraDB |
 | `xtradb_ssl_client_only` | `false` | Disallow non-SSL client connections |
-| `xtradb_tls_enabled` | `false` | Enable TLS encryption for cluster traffic |
-| `xtradb_tls_self_signed` | `false` | Use self-signed SSL certificate from the master node for cluster TLS traffic |
-| `xtradb_tls_custom_cert` | `false` | Use a supplied SSL certificate for cluster TLS traffic |
-| `xtradb_tls_ca_filename` | `""` | CA filename to be copied to the DB nodes from `files/` |
-| `xtradb_tls_cert_filename` | `""` | Certificate filename to be copied to the DB nodes from `files/` |
-| `xtradb_tls_key_filename` | `""` | SSL key filename to be copied to the DB nodes from `files/` |
+| `xtradb_tls_enabled` | `true` | Enable TLS encryption for cluster traffic |
 | `xtradb_configure_firewalld` | `false` | Allow xtradb ports through firewalld for EL 7/8 based distros |
 
 ### MySQL part
@@ -68,8 +52,9 @@ For more info on the values, read the [MariaDB Server System Variables documenta
 | Variable   | Default | Comments (type)  |
 | :---       | :---    | :---             |
 | `xtradb_binlog_format` | `ROW` | The binary logging format  |
-| `xtradb_character_set_server` | `utf` | The character set |
-| `xtradb_collation_server` | `utf8_general_ci` | The collation |
+| `xtradb_character_set_server` | `utf8mb4` | The server character set |
+| `xtradb_default_character_set` | `utf8mb4` | The default character set |
+| `xtradb_collation_server` | `utf8mb4_general_ci` | The collation |
 | `xtradb_default_storage_engine` | `InnoDB` | Setting the Storage Engine |
 | `xtradb_innodb_autoinc_lock_mode` | `2` | There are three possible settings for the innodb_autoinc_lock_mode configuration parameter. The settings are 0, 1, or 2, for “traditional”, “consecutive”, or “interleaved” lock mode, respectively |
 | `xtradb_innodb_buffer_pool_instances` | ` ` | To enable multiple buffer pool instances, set the innodb_buffer_pool_instances configuration option to a value greater than 1 (8 is the default) up to 64 (the maximum). This option takes effect only when you set innodb_buffer_pool_size to a size of 1GB or more. The total size you specify is divided among all the buffer pools |
@@ -90,7 +75,7 @@ For more info on the values, read the [MariaDB Server System Variables documenta
 | `xtradb_max_connections` | `4096` |  |
 | `xtradb_max_heap_table_size` | ` ` |  |
 | `xtradb_max_user_connections` | ` ` |  |
-| `xtradb_pxc_strict_mode` | `ENFORCING` | PXC Strict Mode is designed to avoid the use of experimental and unsupported features in Percona XtraDB Cluster |
+| `xtradb_pxc_strict_mode` | `PERMISSIVE` | PXC Permissive Mode is required for Morpheus|
 | `xtradb_query_cache_size` | ` ` |  |
 | `xtradb_read_buffer_size` | ` ` |  |
 | `xtradb_read_rnd_buffer_size` | ` ` |  |
@@ -102,6 +87,8 @@ For more info on the values, read the [MariaDB Server System Variables documenta
 | `xtradb_table_open_cache` | ` ` |  |
 | `xtradb_table_open_cache_instances` | ` ` |  |
 | `xtradb_tmp_table_size` | ` ` |  |
+| `xtradb_wsrep_cluster_address` | `"gcomm://{{ groups['db'] | map('extract', hostvars, ['ansible_default_ipv4', 'address']) | join(',') }}"` | Cluster server listing |
+| `xtradb_wsrep_sync_wait` | `2` | WSREP Sync Wait |
 
 ### Adding databases
 
@@ -148,8 +135,6 @@ No dependencies.
   roles:
     - role: ansible-role-XtraDB-Cluster
       xtradb_cluster_name: "prod-customer"
-      xtradb_sst_user: sstuser
-      xtradb_sst_password: s3cr3t
       xtradb_root_password: yolo
 
       xtradb_nodes_group: "db"
@@ -163,8 +148,6 @@ No dependencies.
   roles:
     - role: ansible-role-XtraDB-Cluster
       xtradb_cluster_name: "prod-customer"
-      xtradb_sst_user: sstuser
-      xtradb_sst_password: s3cr3t
       xtradb_root_password: yolo
 
       xtradb_bind_address: "{{ ansible_default_ipv4.address }}"
@@ -180,7 +163,6 @@ No dependencies.
   roles:
     - role: ansible-role-XtraDB-Cluster
       xtradb_cluster_name: "prod-customer"
-      xtradb_sst_password: s3cr3t
       xtradb_root_password: yolo
       xtradb_nodes_group: "db"
       xtradb_bind_interface: eth0
@@ -251,7 +233,7 @@ Pull requests are also very welcome. The best way to submit a PR is by first cre
 
 ## License
 
-2-clause BSD license, see [LICENSE.md](LICENSE.md)
+Apache License [LICENSE.txt](LICENSE.txt)
 
 ## Contributors
 
