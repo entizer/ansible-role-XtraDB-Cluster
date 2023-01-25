@@ -5,8 +5,8 @@ driver:
   name: ec2
 platforms:
   - name: instance1
-    image_owner: "125523088429"
-    image_name: "CentOS Stream 8 x86_64 20210603"
+    image_owner: "099720109477"
+    image_name: "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
     instance_type: t3.medium
     vpc_subnet_id: subnet-26c2de6b
     security_groups: [ "sg-39e96c21" ]
@@ -15,8 +15,8 @@ platforms:
     groups:
       - db
   - name: instance2
-    image_owner: "125523088429"
-    image_name: "CentOS Stream 8 x86_64 20210603"
+    image_owner: "099720109477"
+    image_name: "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
     instance_type: t3.medium
     vpc_subnet_id: subnet-26c2de6b
     security_groups: [ "sg-39e96c21" ]
@@ -25,8 +25,8 @@ platforms:
     groups:
       - db
   - name: instance3
-    image_owner: "125523088429"
-    image_name: "CentOS Stream 8 x86_64 20210603"
+    image_owner: "099720109477"
+    image_name: "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
     instance_type: t3.medium
     vpc_subnet_id: subnet-26c2de6b
     security_groups: [ "sg-39e96c21" ]
