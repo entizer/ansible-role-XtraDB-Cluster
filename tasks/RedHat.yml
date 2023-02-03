@@ -1,9 +1,5 @@
 # tasks for Red Hat Familly
 ---
-- name: Print the gateway for each host when defined
-  ansible.builtin.debug:
-    msg: distribution_major_version == {{ ansible_facts['distribution_major_version'] }}
-
 - name: Bound IP Addresses
   ansible.builtin.debug:
     var: xtradb_bind_address
