@@ -1,5 +1,9 @@
 # tasks for Red Hat Familly
 ---
+- name: Print the gateway for each host when defined
+  ansible.builtin.debug:
+    msg: distribution_major_version == {{ ansible_facts['distribution_major_version'] }}
+
 - name: Bound IP Addresses
   ansible.builtin.debug:
     var: xtradb_bind_address
@@ -38,7 +42,8 @@
   ansible.builtin.package:
     name: python3-PyMySQL
     state: present
-  when: (ansible_facts['distribution_major_version'] == "8") or (ansible_facts['distribution_major_version'] == "9")
+  when: (ansible_facts['distribution_major_version'] == "8") or
+        (ansible_facts['distribution_major_version'] == "9")
 
 - name: EL7 | Set Python firewalld module package name
   ansible.builtin.set_fact:
@@ -48,13 +53,15 @@
 - name: EL8/9 | Set Python firewalld module package name
   ansible.builtin.set_fact:
     python_firewalld_module_package: python3-firewall
-  when: (ansible_facts['distribution_major_version'] == "8") or (ansible_facts['distribution_major_version'] == "9")
+  when: (ansible_facts['distribution_major_version'] == "8") or
+        (ansible_facts['distribution_major_version'] == "9")
 
 - name: EL8/9 | Install diffutils
   ansible.builtin.package:
     name: diffutils
     state: present
-  when: (ansible_facts['distribution_major_version'] == "8") or (ansible_facts['distribution_major_version'] == "9")
+  when: (ansible_facts['distribution_major_version'] == "8") or
+        (ansible_facts['distribution_major_version'] == "9")
 
 - name: EL | Install firewalld python module
   ansible.builtin.package:

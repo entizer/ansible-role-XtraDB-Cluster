@@ -43,7 +43,7 @@ These are the minimum variables needed to create a cluster with a user and datab
 | `xtradb_version` | `80` | Package version of XtraDB |
 | `xtradb_ssl_client_only` | `false` | Disallow non-SSL client connections |
 | `xtradb_tls_enabled` | `true` | Enable TLS encryption for cluster traffic |
-| `xtradb_configure_firewalld` | `false` | Allow xtradb ports through firewalld for EL 7/8 based distros |
+| `xtradb_configure_firewalld` | `false` | Allow xtradb ports through firewalld for EL 7/8/9 based distros |
 
 ### MySQL part
 For more info on the values, read the [MariaDB Server System Variables documentation](https://mariadb.com/kb/en/mariadb/server-system-variables/).
