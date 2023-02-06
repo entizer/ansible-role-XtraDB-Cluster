@@ -1,11 +1,16 @@
 xtradb_cluster_name: "morpheus"
-xtradb_root_password: evenmores3cr3t
+xtradb_root_password: 'evenmores3cr3t'
+xtradb_db_user: 'morpheus'
+xtradb_db_pass: 's3cr3t'
 
 xtradb_nodes_group: "db"
+xtradb_database_name: "morpheusdb"
 
 xtradb_databases:
-    - name: morpheusdb
+    - name: "{{ xtradb_database_name }}"
 xtradb_users:
-    - name: morpheus
-      password: Pa55w0rd!
-      priv: 'keystone.*:GRANT,ALL'
+    - name: "{{ xtradb_db_user }}"
+      host: '%'
+      password: "{{ xtradb_db_pass }}"
+      priv: "*.*:SELECT,PROCESS,SHOW DATABASES/{{xtradb_database_name}}.*:ALL"
+      append_privs: false
