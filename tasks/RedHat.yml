@@ -65,19 +65,48 @@
     state: present
   when: xtradb_configure_firewalld
 
-- name: EL | Set firewalld ports
+- name: EL | Set firewalld mySQL port 3306
   ansible.posix.firewalld:
-    port: "{{ fwport }}/tcp"
+    port: "3306/tcp"
     permanent: true
     state: enabled
     immediate: true
-  with_items:
-    - 3306
-    - 4444
-    - 4567
-    - 4568
+  when: xtradb_configure_firewalld
+
+- name: EL | Set firewalld cluster port 4444
+  ansible.posix.firewalld:
+    port: "4444/tcp"
+    source: "{{ fwsource.ansible_default_ipv4.address }}/32"
+    permanent: true
+    state: enabled
+    immediate: true
+  with_items: "{{ hostvars[groups['db']] }}"
   when: xtradb_configure_firewalld
   loop_control:
-    loop_var: fwport
+    loop_var: fwsource
+
+- name: EL | Set firewalld cluster port 4567
+  ansible.posix.firewalld:
+    port: "4567/tcp"
+    source: "{{ fwsource.ansible_default_ipv4.address }}/32"
+    permanent: true
+    state: enabled
+    immediate: true
+  with_items: "{{ hostvars[groups['db']] }}"
+  when: xtradb_configure_firewalld
+  loop_control:
+    loop_var: fwsource
+
+- name: EL | Set firewalld cluster port 4568
+  ansible.posix.firewalld:
+    port: "4568/tcp"
+    source: "{{ fwsource.ansible_default_ipv4.address }}/32"
+    permanent: true
+    state: enabled
+    immediate: true
+  with_items: "{{ hostvars[groups['db']] }}"
+  when: xtradb_configure_firewalld
+  loop_control:
+    loop_var: fwsource
 
 ...
