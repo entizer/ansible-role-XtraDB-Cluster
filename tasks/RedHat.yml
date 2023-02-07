@@ -82,11 +82,11 @@
 - name: EL | Set firewalld cluster port 4444
   ansible.posix.firewalld:
     port: "4444/tcp"
-    source: "{{ fwsource.ansible_default_ipv4.address }}/32"
+    source: "{{ fwsource }}/32"
     permanent: true
     state: enabled
     immediate: true
-  with_items: "{{ hostvars[groups['db']] }}"
+  with_items: "{{ hostvars[groups['db']].ansible_default_ipv4.address }}"
   when: xtradb_configure_firewalld
   loop_control:
     loop_var: fwsource
@@ -94,11 +94,11 @@
 - name: EL | Set firewalld cluster port 4567
   ansible.posix.firewalld:
     port: "4567/tcp"
-    source: "{{ fwsource.ansible_default_ipv4.address }}/32"
+    source: "{{ fwsource }}/32"
     permanent: true
     state: enabled
     immediate: true
-  with_items: "{{ hostvars[groups['db']] }}"
+  with_items: "{{ hostvars[groups['db']].ansible_default_ipv4.address }}"
   when: xtradb_configure_firewalld
   loop_control:
     loop_var: fwsource
@@ -106,11 +106,11 @@
 - name: EL | Set firewalld cluster port 4568
   ansible.posix.firewalld:
     port: "4568/tcp"
-    source: "{{ fwsource.ansible_default_ipv4.address }}/32"
+    source: "{{ fwsource }}/32"
     permanent: true
     state: enabled
     immediate: true
-  with_items: "{{ hostvars[groups['db']] }}"
+  with_items: "{{ hostvars[groups['db']].ansible_default_ipv4.address }}"
   when: xtradb_configure_firewalld
   loop_control:
     loop_var: fwsource
