@@ -81,7 +81,7 @@
 
 - name: Host Details
   ansible.builtin.debug:
-    msg: "{{ hostvars[groups['db']] }}"
+    msg: "{{ hostvars }}"
 
 - name: EL | Set firewalld cluster port 4444
   ansible.posix.firewalld:
@@ -90,7 +90,7 @@
     permanent: true
     state: enabled
     immediate: true
-  with_items: "{{ hostvars[groups['db']].ansible_default_ipv4.address }}"
+  with_items: "{{ hostvars.ansible_default_ipv4.address }}"
   when: xtradb_configure_firewalld
   loop_control:
     loop_var: fwsource
@@ -102,7 +102,7 @@
     permanent: true
     state: enabled
     immediate: true
-  with_items: "{{ hostvars[groups['db']].ansible_default_ipv4.address }}"
+  with_items: "{{ hostvars.ansible_default_ipv4.address }}"
   when: xtradb_configure_firewalld
   loop_control:
     loop_var: fwsource
@@ -114,7 +114,7 @@
     permanent: true
     state: enabled
     immediate: true
-  with_items: "{{ hostvars[groups['db']].ansible_default_ipv4.address }}"
+  with_items: "{{ hostvars.ansible_default_ipv4.address }}"
   when: xtradb_configure_firewalld
   loop_control:
     loop_var: fwsource
