@@ -11,4 +11,5 @@ xtradb_packages:
   - percona-xtradb-cluster
   - python3-mysqldb
 xtradb_socket: "/var/run/mysqld/mysqld.sock"
+mysql_error_log_location: /var/log/mysql/error.log
 ...

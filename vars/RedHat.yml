@@ -11,4 +11,5 @@ xtradb_config_file: "{{ xtradb_confdir }}/wsrep.cnf"
 xtradb_packages:
   - "percona-xtradb-cluster"
 xtradb_socket: "/var/lib/mysql/mysql.sock"
+mysql_error_log_location: /var/log/mysqld.log
 ...

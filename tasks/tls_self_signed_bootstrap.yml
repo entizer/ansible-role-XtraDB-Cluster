@@ -75,7 +75,7 @@
         state: started
   rescue:
     - name: Get 1000 lines of logs
-      ansible.builtin.command: 'tail -n 1000 /var/log/mysqld.log'
+      ansible.builtin.command: "tail -n 1000 {{ mysql_error_log_location }}"
       register: dumplog
       when: true
     - name: Output logs
@@ -105,7 +105,7 @@
         state: started
   rescue:
     - name: Get 1000 lines of logs
-      ansible.builtin.command: 'tail -n 1000 /var/log/mysqld.log'
+      ansible.builtin.command: "tail -n 1000 {{ mysql_error_log_location }}"
       register: dumplog
       when: true
     - name: Output logs
