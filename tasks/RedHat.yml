@@ -79,6 +79,10 @@
     immediate: true
   when: xtradb_configure_firewalld
 
+- name: Host Details
+  ansible.builtin.debug:
+    msg: "{{ hostvars[groups['db']] }}"
+
 - name: EL | Set firewalld cluster port 4444
   ansible.posix.firewalld:
     port: "4444/tcp"
