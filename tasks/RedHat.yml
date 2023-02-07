@@ -81,7 +81,7 @@
 
 - name: Host Details
   ansible.builtin.debug:
-    msg: "{{ hostvars }}"
+    msg: "{{ groups['db'] }}"
 
 - name: EL | Set firewalld cluster port 4444
   ansible.posix.firewalld:
